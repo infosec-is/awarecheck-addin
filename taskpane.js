@@ -101,7 +101,8 @@ function readEmailData() {
 async function postToServer(emailData) {
   let response;
   try {
-    response = await fetch('https://localhost:3000/analyse', {
+    // HTTP on 3001 avoids certificate trust issues in Outlook's WebView2
+    response = await fetch('http://localhost:3001/analyse', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(emailData),
