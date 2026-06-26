@@ -107,10 +107,10 @@ async function postToServer(emailData) {
       body:    JSON.stringify(emailData),
     });
   } catch (networkErr) {
-    // Most likely cause: the server isn't running.
     throw new Error(
       'Could not reach the AwareCHECK server.\n' +
-      'Make sure you started the server with: node server.js'
+      'Make sure you started the server with: node server.js\n\n' +
+      'Technical detail: ' + networkErr.name + ' — ' + networkErr.message
     );
   }
 
