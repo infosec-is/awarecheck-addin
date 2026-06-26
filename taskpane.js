@@ -64,9 +64,12 @@ function readEmailData() {
   // subject is a plain string property — no callback needed
   const subject = item.subject || '';
 
-  // sender address
+  // sender address — include display name so spoofing checks work
+  // Format: "Display Name <email@domain.com>" or just "email@domain.com"
   const from = item.from
-    ? (item.from.emailAddress || '')
+    ? (item.from.displayName
+        ? `${item.from.displayName} <${item.from.emailAddress}>`
+        : (item.from.emailAddress || ''))
     : '';
 
   // reply-to (may be an array in some Outlook versions)
