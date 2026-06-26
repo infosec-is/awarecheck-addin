@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AwareCHECK</title>
+
+  <!--
+    Office.js: the Microsoft library that lets our add-in talk to Outlook.
+    It must be loaded from Microsoft's CDN — it cannot be bundled locally.
+  -->
+  <script
+    type="text/javascript"
+    src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js">
+  </script>
+
+  <!-- Our own styles and script (loaded after Office.js is ready) -->
+  <link rel="stylesheet" href="taskpane.css" />
+</head>
+<body>
+
+  <!-- ─── Idle state: shown before the user clicks "Check Email" ─── -->
+  <div id="idle-view" class="view active">
+    <div class="brand">
+      <span class="brand-icon">🛡</span>
+      <h1>AwareCHECK</h1>
+    </div>
+    <p class="tagline">
+      Checks the open email for fraud signals.<br>
+      Results stay on your device — nothing is sent anywhere.
+    </p>
+    <button id="check-btn" class="btn-check">
+      Check this email
+    </button>
+  </div>
+
+  <!-- ─── Loading state: shown while the server is running checks ─── -->
+  <div id="loading-view" class="view">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Checking…</p>
+    </div>
+  </div>
+
+  <!-- ─── Result state: shown after the verdict arrives ─── -->
+  <div id="result-view" class="view">
+
+    <!-- Coloured header band: changes to red / amber / green based on verdict -->
+    <div id="verdict-header" class="verdict-header">
+      <span id="verdict-icon"  class="verdict-icon"></span>
+      <span id="verdict-level" class="verdict-level"></span>
+    </div>
+
+    <!-- Main card -->
+    <div class="result-card">
+      <h2 id="result-headline"></h2>
+      <p  id="result-explanation"></p>
+
+      <!-- Each triggered check appears here -->
+      <ul id="findings-list" class="findings-list"></ul>
+
+      <!-- Recommended action -->
+      <div id="action-box" class="action-box">
+        <strong id="result-action"></strong>
+      </div>
+    </div>
+
+    <!-- Footer: check-again button + privacy note -->
+    <div class="result-footer">
+      <button id="again-btn" class="btn-again">Check another email</button>
+      <p id="privacy-note" class="privacy-note"></p>
+    </div>
+  </div>
+
+  <!-- ─── Error state ─── -->
+  <div id="error-view" class="view">
+    <div class="error-content">
+      <p class="error-icon">⚠</p>
+      <p id="error-message"></p>
+      <button id="retry-btn" class="btn-again">Try again</button>
+    </div>
+  </div>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>
