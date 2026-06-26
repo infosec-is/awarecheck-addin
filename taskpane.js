@@ -82,21 +82,39 @@ function readEmailData() {
     }
   }
 
-  // Body is async — we only need the first 500 characters
-  return new Promise((resolve, reject) => {
+  // Read body and internet headers in parallel, then combine
+  const bodyPromise = new Promise((resolve, reject) => {
     item.body.getAsync(
       Office.CoercionType.Text,
-      { asyncContext: { from, replyTo, subject } },
+      {},
       function (result) {
         if (result.status === Office.AsyncResultStatus.Succeeded) {
-          const body_snippet = (result.value || '').substring(0, 500);
-          resolve({ from, replyTo, subject, body_snippet });
+          resolve((result.value || '').substring(0, 500));
         } else {
-          reject(new Error('Could not read email body: ' + result.error.message));
+          resolve(''); // non-fatal
         }
       }
     );
   });
+
+  // getAllInternetHeadersAsync requires Mailbox 1.6 — gracefully skip if unavailable
+  const headersPromise = new Promise((resolve) => {
+    if (typeof item.getAllInternetHeadersAsync !== 'function') {
+      resolve('');
+      return;
+    }
+    item.getAllInternetHeadersAsync({}, function (result) {
+      if (result.status === Office.AsyncResultStatus.Succeeded) {
+        resolve(result.value || '');
+      } else {
+        resolve(''); // non-fatal
+      }
+    });
+  });
+
+  return Promise.all([bodyPromise, headersPromise]).then(([body_snippet, internet_headers]) => ({
+    from, replyTo, subject, body_snippet, internet_headers
+  }));
 }
 
 // ─── POST to the local server ─────────────────────────────────────────────────
