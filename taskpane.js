@@ -28,10 +28,14 @@ function showView(id) {
 // We must not touch Office.context.mailbox before this.
 Office.onReady(function (info) {
   if (info.host === Office.HostType.Outlook) {
-    // Wire up button clicks now that the DOM and Office are both ready.
     document.getElementById('check-btn').addEventListener('click', runCheck);
     document.getElementById('again-btn').addEventListener('click', () => showView('idle-view'));
     document.getElementById('retry-btn').addEventListener('click', runCheck);
+
+    // Remember the panel was open so it reopens automatically next time Outlook starts
+    if (Office.addin && typeof Office.addin.setStartupBehavior === 'function') {
+      Office.addin.setStartupBehavior(Office.StartupBehavior.load);
+    }
   }
 });
 
