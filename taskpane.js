@@ -32,10 +32,19 @@ Office.onReady(function (info) {
     document.getElementById('again-btn').addEventListener('click', () => showView('idle-view'));
     document.getElementById('retry-btn').addEventListener('click', runCheck);
 
-    // Remember the panel was open so it reopens automatically next time Outlook starts
+    // Keep the panel open across Outlook sessions
     if (Office.addin && typeof Office.addin.setStartupBehavior === 'function') {
       Office.addin.setStartupBehavior(Office.StartupBehavior.load);
     }
+
+    // Auto-check the current email as soon as the panel opens
+    runCheck();
+
+    // Re-check automatically whenever the user selects a different email
+    Office.context.mailbox.addHandlerAsync(
+      Office.EventType.ItemChanged,
+      function () { runCheck(); }
+    );
   }
 });
 
